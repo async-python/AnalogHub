@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %} Последние обновления {% endblock %}
+{% block content %}
+    <div class="container">
+        <h1> Поиск аналогов </h1>
+        <form class="sdr" method="get" action="/api/v1/analog/search_analog">
+            <input type="search" name="query" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+            <button type="submit" class="btn btn-outline-primary">search</button>
+        </form>
+    </div>
+    <ul id="navigation">
+        {% for item in result %}
+            <li> Исходное обозначение: {{ item.base_name }} {{ item.base_maker }} <br>
+              Обозначение аналога: {{ item.analog_name }} {{ item.analog_maker }}</li>
+            <br>
+        {% endfor %}
+    </ul>
+{% endblock %}
