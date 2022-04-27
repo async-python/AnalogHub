@@ -4,12 +4,9 @@ import uvicorn
 from elasticsearch import AsyncElasticsearch
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from fastapi.staticfiles import StaticFiles
-from starlette.requests import Request
-from starlette.responses import HTMLResponse
 
 from api.v1 import analogs
-from core.config import AppSettings, templates
+from core.config import AppSettings
 from core.logger import LOGGING
 from db import elastic
 
@@ -21,12 +18,6 @@ app = FastAPI(
     openapi_url='/api/openapi.json',
     default_response_class=ORJSONResponse
 )
-app.mount("/static", StaticFiles(directory="static", html=True), name="static")
-
-
-@app.get('/', response_class=HTMLResponse)
-async def read_item(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.on_event('startup')

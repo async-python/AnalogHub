@@ -60,7 +60,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./db/es_schemes/schemas_row.json:/home/curl_user/schemas_row.json
+      - ./db/es_schemes/scheme_analog.json:/home/curl_user/scheme_analog.json
       - ./db/es_schemes/scheme_product.json:/home/curl_user/scheme_product.json
       - ./curl_entrypoint.sh:/home/curl_user/curl_entrypoint.sh
     depends_on:

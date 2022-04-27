@@ -2,18 +2,15 @@ import uuid
 
 import aiofiles
 import celery
-from celery.result import AsyncResult
 from fastapi import (APIRouter, BackgroundTasks, Depends, File, HTTPException,
                      Query, UploadFile)
 from fastapi.logger import logger
-from starlette.requests import Request
-from starlette.responses import HTMLResponse
 
-from core.config import BASE_DIR, templates
-from models.input.model_analog import DataAnalogEntry
-from models.input.model_product import DataProductEntry
+from core.config import BASE_DIR
+from models.out.model_analog_out import DataAnalogOut
+from models.out.model_product_out import DataProductOut
 from services.analog_service import AnalogService, get_analog_service
-from services.makers.choices import Maker
+from services.makers.choices import Filter, Maker
 from services.transliterate import prepare_text
 from services.utils import page_num_params, page_size_params
 from worker import upload_elastic_analogs, upload_elastic_makers
@@ -25,47 +22,47 @@ xlsx_con_type = ('application/vnd.openxmlformats'
 zip_con_type = 'application/zip'
 
 
-@router.get("/search_analog", response_class=HTMLResponse, tags=['html'])
-async def search_item(request: Request,
-                      analog_service: AnalogService = Depends(
-                          get_analog_service)):
-    body = request.query_params['query']
-    response = await search_analogs(body, 0, 20, analog_service)
-    return templates.TemplateResponse("index.html",
-                                      {'request': request, 'result': response})
-
-
 @router.post('/search_analog',
              name='Поиск аналога инструмента',
              description='Полнотекстовый поиск аналога инструмента',
-             response_model=list[DataAnalogEntry],
-             response_model_exclude_unset=True)
+             response_model=list[DataAnalogOut],
+             response_model_exclude_none=True)
 async def search_analogs(query: str,
+                         search_type: Filter = Filter.ngram_search,
                          page_number: int = Query(**page_num_params),
                          page_size: int = Query(**page_size_params),
                          analog_service: AnalogService = Depends(
-                             get_analog_service)) -> list[DataAnalogEntry]:
+                             get_analog_service)) -> list[DataAnalogOut]:
     query_text = prepare_text(query)
-    rows: list[DataAnalogEntry] = await analog_service.search_analogs(
-        query_text, page_number, page_size)
-    return rows
+    if search_type == Filter.ngram_search:
+        result = await analog_service.search_analogs_ngram(
+            query_text, page_number, page_size)
+    else:
+        result = await analog_service.search_analogs_ngram(
+            query_text, page_number, page_size)
+    return [DataAnalogOut(**model.dict()) for model in result]
 
 
 @router.post('/search_product',
              name='Поиск инструмента по производителю',
              description='Полнотекстовый поиск инструмента по производителю',
-             response_model=list[DataProductEntry],
-             response_model_exclude_unset=True)
+             response_model=list[DataProductOut],
+             response_model_exclude_none=True)
 async def search_products(query: str,
+                          search_type: Filter = Filter.ngram_search,
                           maker: Maker = Maker.ALL,
                           page_number: int = Query(**page_num_params),
                           page_size: int = Query(**page_size_params),
                           analog_service: AnalogService = Depends(
-                              get_analog_service)) -> list[DataProductEntry]:
+                              get_analog_service)) -> list[DataProductOut]:
     query_text = prepare_text(query)
-    rows: list[DataProductEntry] = await analog_service.search_products_wildcard(
-        query_text, maker, page_number, page_size)
-    return rows
+    if search_type == Filter.ngram_search:
+        result = await analog_service.search_products_ngram(
+            query_text, maker, page_number, page_size)
+    else:
+        result = await analog_service.search_products_wildcard(
+            query_text, maker, page_number, page_size)
+    return [DataProductOut(**model.dict()) for model in result]
 
 
 @router.post('/upload_analogs', status_code=201)

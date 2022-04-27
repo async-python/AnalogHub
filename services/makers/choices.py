@@ -20,3 +20,8 @@ class Maker(str, Enum):
     Bribase = 'Bribase'
     ASKUP = 'ASKUP'
     ILIX = 'ILIX'
+
+
+class Filter(str, Enum):
+    string_search = 'string_search'
+    ngram_search = 'ngram_search'

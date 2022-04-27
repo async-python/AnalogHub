@@ -16,19 +16,28 @@ settings = AppSettings()
 
 
 class AnalogService(TemplateService):
-    async def search_analogs(self, request: str,
-                             page_number: int, page_size: int
-                             ) -> Optional[list[DataAnalogEntry]]:
-        search_fields = ['analog_name_clean', 'base_name_clean']
+    async def search_analogs_ngram(self, request: str,
+                                   page_number: int, page_size: int
+                                   ) -> Optional[list[DataAnalogEntry]]:
+        search_fields = ['analog_name_ngram', 'base_name_ngram']
         query = get_multimatch_query(search_fields, request)
         analogs = await self.get_list_from_elastic(page_number,
                                                    page_size, query)
         return analogs
 
-    async def search_products(self, request: str, maker: Maker,
-                              page_number: int, page_size: int
-                              ) -> Optional[list[DataProductEntry]]:
-        search_fields = ['name_clean', 'search_field']
+    async def search_analogs_string(self, request: str,
+                                    page_number: int, page_size: int
+                                    ) -> Optional[list[DataAnalogEntry]]:
+        search_fields = ['analog_name_string', 'base_name_string']
+        query = get_wildcard_query(search_fields, request)
+        analogs = await self.get_list_from_elastic(page_number,
+                                                   page_size, query)
+        return analogs
+
+    async def search_products_ngram(self, request: str, maker: Maker,
+                                    page_number: int, page_size: int
+                                    ) -> Optional[list[DataProductEntry]]:
+        search_fields = ['name_ngram', 'search_field']
         if maker.value != Maker.ALL:
             query = get_multimatch_query(
                 search_fields, request, maker.value)

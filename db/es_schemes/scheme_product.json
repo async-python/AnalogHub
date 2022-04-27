@@ -32,7 +32,7 @@
       "name_string": {
         "type": "text"
       },
-      "name_clean": {
+      "name_ngram": {
         "type": "text",
         "analyzer": "my_analyzer"
       },

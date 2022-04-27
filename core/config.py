@@ -3,7 +3,6 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from pydantic import BaseSettings
-from starlette.templating import Jinja2Templates
 
 from core.logger import LOGGING
 
@@ -12,7 +11,6 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 load_dotenv()
 
 logging_config.dictConfig(LOGGING)
-templates = Jinja2Templates(directory="templates")
 
 
 class AppSettings(BaseSettings):
