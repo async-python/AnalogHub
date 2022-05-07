@@ -41,8 +41,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          source: "docker-compose.yml, curl_entrypoint.sh, 
-          scripts/*, db/es_schemes/*"
+          source: "docker-compose.yml, curl_entrypoint.sh, scripts/*, db/es_schemes/*"
           target: "~/app/"
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
