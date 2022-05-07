@@ -53,6 +53,11 @@ def transliterate(text: str) -> str:
     return res
 
 
+def stringify(text: str) -> str:
+    return '*' + '*'.join(text) + '*'
+
+
 def prepare_text(text: str) -> str:
     text = delete_symbols(text).lower()
+    text = delete_ru_literals_all(text)
     return text

@@ -31,13 +31,16 @@ class AppSettings(BaseSettings):
     service_port: str = 8000
     api_version: str = 'v1'
 
+    file_path = BASE_DIR / 'file_storage'
+
     class Config:
         env_file = '.env'
 
     @property
     def redis_url(self):
-        return (f'redis://'
-                f':{self.redis_password}@{self.redis_host}:{self.redis_port}')
+        return (
+            f'redis://:{self.redis_password}'
+            f'@{self.redis_host}:{self.redis_port}/0')
 
     @property
     def elastic_url(self):

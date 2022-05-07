@@ -2,33 +2,68 @@ from functools import lru_cache
 from typing import Optional
 
 from elasticsearch import AsyncElasticsearch
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 
 from core.config import AppSettings
 from db.elastic import get_elastic
 from models.input.model_analog import DataAnalogEntry
 from models.input.model_product import DataProductEntry
+from services.concurrent import run_in_executor
+from services.file_utils import get_base_names_xlsx, save_xlsx_analogs
 from services.makers.choices import Maker
+from services.queries import (get_multimatch_query, get_wildcard_query,
+                              page_search_params)
 from services.template_service import TemplateService
-from services.utils import get_multimatch_query, get_wildcard_query
+from services.transliterate import prepare_text, stringify
 
 settings = AppSettings()
 
 
 class AnalogService(TemplateService):
+    async def search_list_analogs(self, file_path, result_file_path):
+        base_names = await run_in_executor(get_base_names_xlsx, file_path)
+        analogs, analog_makers, bad = [], [], []
+        for i, text in enumerate(base_names):
+            try:
+                prepared_text = prepare_text(text)
+                if len(prepared_text):
+                    prepared_text = stringify(prepared_text)
+                    analog = await self.search_analogs_string(
+                        prepared_text, **page_search_params,
+                        search_fields=['base_name_string'])
+                    analogs.append(analog[0].analog_name)
+                    analog_makers.append(analog[0].analog_maker)
+                else:
+                    analogs.append(None)
+                    analog_makers.append(None)
+            except HTTPException:
+                bad.append(i)
+                analog = await self.search_analogs_ngram(
+                    text, search_fields=['base_name_ngram'],
+                    **page_search_params)
+                analogs.append(analog[0].analog_name)
+                analog_makers.append(analog[0].analog_maker)
+        await run_in_executor(
+            save_xlsx_analogs, file_path, result_file_path,
+            analogs, analog_makers, bad)
+
     async def search_analogs_ngram(self, request: str,
-                                   page_number: int, page_size: int
+                                   page_number: int, page_size: int,
+                                   search_fields: list[str] = None,
                                    ) -> Optional[list[DataAnalogEntry]]:
-        search_fields = ['analog_name_ngram', 'base_name_ngram']
+        if search_fields is None:
+            search_fields = ['analog_name_ngram', 'base_name_ngram']
         query = get_multimatch_query(search_fields, request)
         analogs = await self.get_list_from_elastic(page_number,
                                                    page_size, query)
         return analogs
 
     async def search_analogs_string(self, request: str,
-                                    page_number: int, page_size: int
+                                    page_number: int, page_size: int,
+                                    search_fields: list[str] = None,
                                     ) -> Optional[list[DataAnalogEntry]]:
-        search_fields = ['analog_name_string', 'base_name_string']
+        if search_fields is None:
+            search_fields = ['analog_name_string', 'base_name_string']
         query = get_wildcard_query(search_fields, request)
         analogs = await self.get_list_from_elastic(page_number,
                                                    page_size, query)
@@ -59,8 +94,7 @@ class AnalogService(TemplateService):
         else:
             query = get_wildcard_query(search_fields, request)
         products = await self.get_list_from_elastic(
-            page_number,
-            page_size, query,
+            page_number, page_size, query,
             es_index=settings.es_index_product,
             model=DataProductEntry)
         return products

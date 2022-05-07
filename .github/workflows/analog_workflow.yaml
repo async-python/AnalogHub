@@ -1,0 +1,62 @@
+name: analog_workflow
+
+on: [push]
+
+jobs:
+  build_and_push_to_docker_hub:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to Docker
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: vardeath/analog_app:v1.0
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_push_to_docker_hub
+    if: contains('
+      refs/heads/master
+      refs/heads/main
+      ', github.ref)
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v2
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          source: "docker-compose.yml, curl_entrypoint.sh, scripts/nginx/default.conf, scripts/nginx/nginx.conf"
+          target: "~/app/"
+      - name: executing remote ssh commands to deploy
+        uses: appleboy/ssh-action@master
+        env:
+          PROD_ENV_FILE: ${{ secrets.PROD_ENV_FILE }}
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          script: |
+            cd ~/app/
+            rm .env
+            touch .env
+            echo "${{ secrets.PROD_ENV_FILE }}" >> .env
+            sudo docker-compose down
+            sudo docker image rm vardeath/analog_app:v1.0
+            sudo docker-compose up -d

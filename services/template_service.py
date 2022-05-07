@@ -5,8 +5,7 @@ from elasticsearch import AsyncElasticsearch
 from fastapi import HTTPException
 from fastapi.logger import logger
 
-from models.input.model_analog import DataAnalogEntry
-from services.utils import get_pagination_query
+from services.queries import get_pagination_query
 
 
 class TemplateService:
@@ -16,14 +15,6 @@ class TemplateService:
         self.elastic = elastic
         self.model = model
         self.es_index = es_index
-
-    async def write_es_data(self, data: list[DataAnalogEntry]):
-        body = []
-        for model in data:
-            head = {'index': {'_index': self.es_index, '_id': model.id}}
-            body.append(head)
-            body.append(model.dict())
-        await self.elastic.bulk(index=self.es_index, operations=body)
 
     async def get_list_from_elastic(
             self, page_number: int, page_size: int,
@@ -45,6 +36,7 @@ class TemplateService:
             raise HTTPException(status_code=HTTPStatus.BAD_REQUEST,
                                 detail=f'bad request')
         if not len(docs['hits']['hits']):
+            logger.info(query)
             raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                                 detail='not found')
         return [model(**doc['_source']) for doc in
