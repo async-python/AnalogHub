@@ -55,7 +55,6 @@ services:
   es_init_table:
     image: curlimages/curl:7.79.1
     container_name: es_init_table
-    restart: always
     entrypoint: ["sh", "/home/curl_user/curl_entrypoint.sh"]
     env_file:
       - .env
