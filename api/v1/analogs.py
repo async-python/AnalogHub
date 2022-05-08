@@ -1,18 +1,22 @@
 import os
+from http import HTTPStatus
 
 import celery
+import fastapi
 from celery.result import AsyncResult
 from fastapi import (APIRouter, BackgroundTasks, Depends, File, Query,
-                     UploadFile)
+                     UploadFile, HTTPException)
 from starlette.responses import FileResponse, JSONResponse
 
 from core.config import BASE_DIR
 from models.out.model_analog_out import DataAnalogOut
 from models.out.model_product_out import DataProductOut
 from services.analog_service import AnalogService, get_analog_service
+from services.concurrent import run_in_executor
 from services.file_utils import (get_xlsx_path, save_file, verify_xlsx_type,
-                                 verify_zip_type, xlsx_headers)
-from services.makers.choices import Filter, Maker
+                                 verify_zip_type, xlsx_headers,
+                                 verify_required_fields)
+from services.enums import Filter, Maker, Table
 from services.queries import page_num_params, page_size_params
 from services.transliterate import prepare_text
 from worker import (get_task_result, upload_elastic_analogs,
@@ -34,7 +38,9 @@ def get_status(task_id: str):
 
 @router.post('/search_list_analogs',
              name='Поиск списка аналогов инструмента',
-             description='Полнотекстовый поиск писков аналогов инструмента',
+             description='Полнотекстовый поиск писков аналогов инструмента. '
+                         'Требуется xlsx файл с полями: '
+                         f'"{Table.tool}", "{Table.brand}"',
              response_description='xlsx',
              response_class=File(...),
              status_code=201)
@@ -45,6 +51,13 @@ async def search_list_analogs(background_tasks: BackgroundTasks,
     verify_xlsx_type(xlsx_file)
     file_path, result_file_path = get_xlsx_path(), get_xlsx_path()
     await save_file(xlsx_file, file_path)
+
+    verify = await run_in_executor(
+        verify_required_fields, file_path, [Table.tool, Table.brand])
+    if not verify:
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST,
+                            detail=f'bad request')
+
     await analog_service.search_list_analogs(file_path, result_file_path)
     background_tasks.add_task(os.remove, file_path)
     background_tasks.add_task(os.remove, result_file_path)
@@ -94,16 +107,31 @@ async def search_products(query: str,
     return [DataProductOut(**model.dict()) for model in result]
 
 
-@router.post('/upload_analogs', status_code=201)
+@router.post('/upload_analogs',
+             name='Загрузка таблиц аналогов',
+             description='Требуется xlsx файл с полями: '
+                         '"Инструмент", "Бренд", "Аналог", "Бренд аналога"',
+             status_code=201)
 async def upload_analogs_xlsx(xlsx_file: UploadFile = File(...)):
     verify_xlsx_type(xlsx_file)
     file_path = get_xlsx_path()
     await save_file(xlsx_file, file_path)
+
+    fields = [x.value for x in [*Table]]
+    verify = await run_in_executor(
+        verify_required_fields, file_path, fields)
+    if not verify:
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST,
+                            detail=f'bad request')
+
     task: celery.Task = upload_elastic_analogs.delay(file_path=file_path)
     return {'result': 'acknowledge True', 'task_id': task.id}
 
 
-@router.post('/upload_makers', status_code=201)
+@router.post('/upload_makers',
+             name='Загрузка прайсов производителей',
+             description='Загрузка прайсов производителей zip архивом',
+             status_code=201)
 async def upload_makers_zip(zip_file: UploadFile = File(...)):
     verify_zip_type(zip_file)
     file_name = zip_file.filename

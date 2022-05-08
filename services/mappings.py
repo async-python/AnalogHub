@@ -1,5 +1,5 @@
 from models.input.model_product import DataProductEntry
-from services.makers.choices import Maker
+from services.enums import Maker
 from services.transliterate import delete_ru_literals_all, delete_symbols
 
 makers_map = {

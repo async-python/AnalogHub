@@ -5,6 +5,7 @@ import pandas as pd
 from fastapi import HTTPException
 
 from core.config import BASE_DIR
+from services.enums import Table
 
 xlsx_con_type = ('application/vnd.openxmlformats'
                  '-officedocument.spreadsheetml.sheet')
@@ -51,10 +52,10 @@ def save_xlsx_analogs(
     with open(file_path, 'rb') as f:
         excel = pd.read_excel(f, 0, keep_default_na=False)
         new_frame = pd.DataFrame()
-        new_frame['Инструмент'] = excel['Инструмент'].values
-        new_frame['Бренд'] = excel['Бренд'].values
-        new_frame['Аналог'] = analogs
-        new_frame['Бренд аналога'] = makers
+        new_frame[Table.tool] = excel[Table.tool].values
+        new_frame[Table.brand] = excel[Table.brand].values
+        new_frame[Table.analog] = analogs
+        new_frame[Table.analog_brand] = makers
         writer = pd.ExcelWriter(result_file_path, engine='xlsxwriter')
         workbook = writer.book  # noqa
         cell_format = workbook.add_format({'bg_color': '#F4A460'})
@@ -69,9 +70,20 @@ def save_xlsx_analogs(
 
 def get_columns_locs(pd_dataframe: pd.DataFrame):
     locs = {
-        'base_col_num': pd_dataframe.columns.get_loc('Инструмент'),
-        'base_maker_col_num': pd_dataframe.columns.get_loc('Бренд'),
-        'analog_col_num': pd_dataframe.columns.get_loc('Аналог'),
-        'analog_maker_col_num': pd_dataframe.columns.get_loc('Бренд аналога'),
+        'base_col_num': pd_dataframe.columns.get_loc(Table.tool),
+        'base_maker_col_num': pd_dataframe.columns.get_loc(Table.brand),
+        'analog_col_num': pd_dataframe.columns.get_loc(Table.analog),
+        'analog_maker_col_num': pd_dataframe.columns.get_loc(
+            Table.analog_brand),
     }
     return locs
+
+
+def verify_required_fields(file: str, fields: list[Table]):
+    with open(file, 'rb') as f:
+        excel = pd.read_excel(f, 0, keep_default_na=False)
+        names = excel.columns.tolist()
+        for field in fields:
+            if field not in names:
+                return False
+        return True

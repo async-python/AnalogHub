@@ -25,3 +25,10 @@ class Maker(str, Enum):
 class Filter(str, Enum):
     string_search = 'string_search'
     ngram_search = 'ngram_search'
+
+
+class Table(str, Enum):
+    tool = 'Инструмент'
+    brand = 'Бренд'
+    analog = 'Аналог'
+    analog_brand = 'Бренд аналога'

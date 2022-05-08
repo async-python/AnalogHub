@@ -10,7 +10,7 @@ from models.input.model_analog import DataAnalogEntry
 from models.input.model_product import DataProductEntry
 from services.concurrent import run_in_executor
 from services.file_utils import get_base_names_xlsx, save_xlsx_analogs
-from services.makers.choices import Maker
+from services.enums import Maker
 from services.queries import (get_multimatch_query, get_wildcard_query,
                               page_search_params)
 from services.template_service import TemplateService

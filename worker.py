@@ -17,7 +17,7 @@ from elasticsearch import Elasticsearch
 from core.config import BASE_DIR, AppSettings
 from models.input.model_analog import DataAnalogEntry
 from services.file_utils import get_columns_locs
-from services.makers.mappings import makers_map
+from services.mappings import makers_map
 
 settings = AppSettings()
 
