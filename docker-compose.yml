@@ -3,6 +3,7 @@ version: '3.9'
 x-app-api:
   &fastapi_app_table
   image: vardeath/analog_app:v1.0
+  restart: always
   env_file:
     - .env
   depends_on:
@@ -29,6 +30,7 @@ services:
   db_elastic_table:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
     container_name: db_elastic_table
+    restart: always
     environment:
       - discovery.type=single-node
       - bootstrap.memory_lock=true
@@ -53,6 +55,7 @@ services:
   es_init_table:
     image: curlimages/curl:7.79.1
     container_name: es_init_table
+    restart: always
     entrypoint: ["sh", "/home/curl_user/curl_entrypoint.sh"]
     env_file:
       - .env
@@ -72,6 +75,7 @@ services:
   db_redis_table:
     image: 'redis:6.2.6'
     container_name: db_redis
+    restart: always
     volumes:
       - redis_volume_table:/usr/local/etc/redis/redis.conf
     env_file:
@@ -136,6 +140,7 @@ services:
   nginx_analog:
     image: nginx:1.19.5-alpine
     container_name: nginx_analog
+    restart: always
     volumes:
       - static_volume:/code/static/
       - media_volume:/code/media/
