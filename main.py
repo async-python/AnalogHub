@@ -4,6 +4,8 @@ import uvicorn
 from elasticsearch import AsyncElasticsearch
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
+from starlette import status
+from starlette.responses import RedirectResponse
 
 from api.v1 import analogs
 from core.config import AppSettings
@@ -18,6 +20,11 @@ app = FastAPI(
     openapi_url='/api/openapi.json',
     default_response_class=ORJSONResponse
 )
+
+
+@app.get('/')
+async def index():
+    return RedirectResponse('/api/openapi', status_code=status.HTTP_302_FOUND)
 
 
 @app.on_event('startup')
