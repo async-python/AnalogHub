@@ -53,7 +53,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          source: "backend/docker-compose.yml, backend/curl_entrypoint.sh, backend/scripts/nginx/*.conf, backend/db/es_schemes/*.json --override"
+          source: "./docker-compose.yml, ./backend/curl_entrypoint.sh, ./backend/scripts/nginx/*.conf, ./backend/db/es_schemes/*.json --override"
           target: "~/app/"
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
