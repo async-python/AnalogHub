@@ -4,7 +4,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from pydantic import BaseSettings
 
-from backend.core.logger import LOGGING
+from core.logger import LOGGING
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 

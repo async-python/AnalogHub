@@ -7,19 +7,19 @@ from fastapi import (APIRouter, BackgroundTasks, Depends, File, HTTPException,
                      Query, UploadFile)
 from starlette.responses import FileResponse, JSONResponse
 
-from backend.core.config import BASE_DIR
-from backend.models.out.model_analog_out import DataAnalogOut
-from backend.models.out.model_product_out import DataProductOut
-from backend.services.analog_service import AnalogService, get_analog_service
-from backend.services.concurrent import run_in_executor
-from backend.services.enums import Filter, Maker, Table
-from backend.services.file_utils import (get_xlsx_path, save_file,
-                                         verify_required_fields, verify_xlsx_type,
-                                         verify_zip_type, xlsx_headers)
-from backend.services.queries import page_num_params, page_size_params
-from backend.services.transliterate import prepare_text
-from backend.worker import (get_task_result, upload_elastic_analogs,
-                            upload_elastic_makers)
+from core.config import BASE_DIR
+from models.out.model_analog_out import DataAnalogOut
+from models.out.model_product_out import DataProductOut
+from services.analog_service import AnalogService, get_analog_service
+from services.concurrent import run_in_executor
+from services.enums import Filter, Maker, Table
+from services.file_utils import (get_xlsx_path, save_file,
+                                 verify_required_fields, verify_xlsx_type,
+                                 verify_zip_type, xlsx_headers)
+from services.queries import page_num_params, page_size_params
+from services.transliterate import prepare_text
+from worker import (get_task_result, upload_elastic_analogs,
+                    upload_elastic_makers)
 
 router = APIRouter()
 

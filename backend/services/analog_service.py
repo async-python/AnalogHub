@@ -4,17 +4,17 @@ from typing import Optional
 from elasticsearch import AsyncElasticsearch
 from fastapi import Depends, HTTPException
 
-from backend.core.config import AppSettings
-from backend.db.elastic import get_elastic
-from backend.models.input.model_analog import DataAnalogEntry
-from backend.models.input.model_product import DataProductEntry
-from backend.services.concurrent import run_in_executor
-from backend.services.enums import Maker
-from backend.services.file_utils import get_base_names_xlsx, save_xlsx_analogs
-from backend.services.queries import (get_multimatch_query, get_wildcard_query,
-                                      page_search_params)
-from backend.services.template_service import TemplateService
-from backend.services.transliterate import prepare_text, stringify
+from core.config import AppSettings
+from db.elastic import get_elastic
+from models.input.model_analog import DataAnalogEntry
+from models.input.model_product import DataProductEntry
+from services.concurrent import run_in_executor
+from services.enums import Maker
+from services.file_utils import get_base_names_xlsx, save_xlsx_analogs
+from services.queries import (get_multimatch_query, get_wildcard_query,
+                              page_search_params)
+from services.template_service import TemplateService
+from services.transliterate import prepare_text, stringify
 
 settings = AppSettings()
 

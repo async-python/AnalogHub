@@ -1,6 +1,6 @@
 from typing import Optional
 
-from backend.models.out.base_model_out import OrjsonBaseOut
+from models.out.base_model_out import OrjsonBaseOut
 
 
 class DataAnalogOut(OrjsonBaseOut):

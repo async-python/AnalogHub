@@ -1,7 +1,7 @@
 from typing import Optional
 
-from backend.models.input.base_model import OrjsonBase
-from backend.services.transliterate import delete_symbols
+from models.input.base_model import OrjsonBase
+from services.transliterate import delete_symbols
 
 
 class DataAnalogEntry(OrjsonBase):
