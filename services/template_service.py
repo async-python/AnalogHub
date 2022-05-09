@@ -34,7 +34,7 @@ class TemplateService:
         except Exception as error:
             logger.info(error)
             raise HTTPException(status_code=HTTPStatus.BAD_REQUEST,
-                                detail=f'bad request')
+                                detail='bad request')
         if not len(docs['hits']['hits']):
             logger.info(query)
             raise HTTPException(status_code=HTTPStatus.NOT_FOUND,

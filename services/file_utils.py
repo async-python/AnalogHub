@@ -12,7 +12,7 @@ xlsx_con_type = ('application/vnd.openxmlformats'
 zip_con_type = 'application/zip'
 
 xlsx_headers = {
-    'Content-Disposition': f'attachment; filename="response.xlsx"'
+    'Content-Disposition': 'attachment; filename="response.xlsx"'
 }
 
 column_width_conf = [(0, 0, 6), (1, 1, 45), (2, 2, 20), (3, 3, 45), (4, 4, 20)]
