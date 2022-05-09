@@ -23,6 +23,8 @@ jobs:
         with:
           push: true
           tags: vardeath/analog_app:v1.0
+          context: backend
+          file: backend/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
@@ -51,7 +53,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          source: "docker-compose.yml, curl_entrypoint.sh, scripts/*.conf, db/*.json --override"
+          source: "backend/docker-compose.yml, backend/curl_entrypoint.sh, backend/scripts/nginx/*.conf, backend/db/es_schemes/*.json --override"
           target: "~/app/"
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master

@@ -4,8 +4,8 @@ import aiofiles
 import pandas as pd
 from fastapi import HTTPException
 
-from core.config import BASE_DIR
-from services.enums import Table
+from backend.core.config import BASE_DIR
+from backend.services.enums import Table
 
 xlsx_con_type = ('application/vnd.openxmlformats'
                  '-officedocument.spreadsheetml.sheet')

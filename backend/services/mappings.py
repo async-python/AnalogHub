@@ -1,6 +1,6 @@
-from models.input.model_product import DataProductEntry
-from services.enums import Maker
-from services.transliterate import delete_ru_literals_all, delete_symbols
+from backend.models.input.model_product import DataProductEntry
+from backend.services.enums import Maker
+from backend.services.transliterate import delete_ru_literals_all, delete_symbols
 
 makers_map = {
     Maker.PALBIT: lambda x: DataProductEntry(

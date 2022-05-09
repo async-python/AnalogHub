@@ -4,7 +4,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from pydantic import BaseSettings
 
-from core.logger import LOGGING
+from backend.core.logger import LOGGING
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
@@ -14,7 +14,7 @@ logging_config.dictConfig(LOGGING)
 
 
 class AppSettings(BaseSettings):
-    project_name = 'Analogs'
+    project_name = 'AnalogHub'
 
     redis_host: str = 'localhost'
     redis_port: int = 6379

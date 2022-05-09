@@ -59,9 +59,9 @@ services:
     env_file:
       - .env
     volumes:
-      - ./db/es_schemes/scheme_analog.json:/home/curl_user/scheme_analog.json
-      - ./db/es_schemes/scheme_product.json:/home/curl_user/scheme_product.json
-      - ./curl_entrypoint.sh:/home/curl_user/curl_entrypoint.sh
+      - ./backend/db/es_schemes/scheme_analog.json:/home/curl_user/scheme_analog.json
+      - ./backend/db/es_schemes/scheme_product.json:/home/curl_user/scheme_product.json
+      - ./backend/curl_entrypoint.sh:/home/curl_user/curl_entrypoint.sh
     depends_on:
       db_elastic_table:
         condition: service_healthy
@@ -143,8 +143,8 @@ services:
     volumes:
       - static_volume:/code/static/
       - media_volume:/code/media/
-      - ./scripts/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./scripts/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./backend/scripts/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./backend/scripts/nginx/nginx.conf:/etc/nginx/nginx.conf
     logging:
       driver: "json-file"
       options:

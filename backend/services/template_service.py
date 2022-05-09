@@ -5,7 +5,7 @@ from elasticsearch import AsyncElasticsearch
 from fastapi import HTTPException
 from fastapi.logger import logger
 
-from services.queries import get_pagination_query
+from backend.services.queries import get_pagination_query
 
 
 class TemplateService:

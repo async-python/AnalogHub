@@ -64,7 +64,8 @@ def load_es_data_partially(data: Iterable, es_index: str):
 @celery_app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
-        crontab(hour='*/1', minute=0), delete_old_files.s(), name='clear old files')
+        crontab(hour='*/1', minute=0), delete_old_files.s(),
+        name='clear old files')
 
 
 @celery_app.task(name='upload_elastic_analogs')
