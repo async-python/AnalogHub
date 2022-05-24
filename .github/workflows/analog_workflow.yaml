@@ -81,7 +81,7 @@ jobs:
             cd ~
             sudo mkdir -p ./app/frontend/static/
             sudo cp -r ./static_files/* ./app/frontend/static/
-            cd ~/app/
+            cd ~/app
             sudo touch .env
             sudo echo "${{ secrets.PROD_ENV_FILE }}" >> .env
             sudo docker image pull vardeath/analog_app_backend:v1.0
