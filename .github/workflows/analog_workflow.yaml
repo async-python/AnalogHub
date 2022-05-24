@@ -55,8 +55,9 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            cd ~
+            cd ~/app/
             sudo docker-compose down
+            cd ~
             sudo rm -r -f ./app/
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
@@ -80,7 +81,8 @@ jobs:
             cd ~/app/
             touch .env
             echo "${{ secrets.PROD_ENV_FILE }}" >> .env
+            sudo mkdir -p ./app/frontend/static/
             sudo cp -r ./static_files/* ./app/frontend/static/
-            sudo docker image rm vardeath/analog_app_backend:v1.0
-            sudo docker image rm vardeath/analog_app_frontend:v1.0
+            sudo docker image pull vardeath/analog_app_backend:v1.0
+            sudo docker image pull vardeath/analog_app_frontend:v1.0
             sudo docker-compose up -d
