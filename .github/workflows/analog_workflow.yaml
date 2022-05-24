@@ -79,8 +79,8 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             cd ~
-            sudo mkdir -p ./app/frontend/static/
-            sudo cp -r ./static_files/* ./app/frontend/static/
+            mkdir -p ./app/frontend/static/
+            cp -r ./static_files/* ./app/frontend/static/
             cd ~/app
             touch .env
             echo "${{ secrets.PROD_ENV_FILE }}" >> .env
