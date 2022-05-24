@@ -1,14 +1,13 @@
 import aiofiles.os
-from werkzeug.exceptions import NotFound, abort
-from flask import (render_template, send_from_directory, Blueprint)
-from flask_login import login_required
 from core.conf import BASE_DIR, UrlConf
+from flask import Blueprint, render_template, send_from_directory
+from flask_login import login_required
 from src.forms import SearchForm, SearchFormProduct, UploadForm
 from utils.async_funcs import fetch, fetch_file
 from utils.choices import Response_type
 from utils.data_models import HTTPResponse
 from utils.form_utils import save_form_file
-
+from werkzeug.exceptions import NotFound, abort
 
 analog = Blueprint('analog', __name__,
                    template_folder=BASE_DIR / 'templates',

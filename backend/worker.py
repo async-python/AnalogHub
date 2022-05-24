@@ -12,9 +12,8 @@ import pandas as pd
 from celery import Celery
 from celery.schedules import crontab
 from celery.utils.log import get_task_logger
-from elasticsearch import Elasticsearch
-
 from core.config import BASE_DIR, AppSettings
+from elasticsearch import Elasticsearch
 from models.input.model_analog import DataAnalogEntry
 from services.file_utils import get_columns_locs
 from services.mappings import makers_map

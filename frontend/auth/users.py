@@ -1,7 +1,7 @@
-from flask import flash, redirect, url_for, request
+from flask import flash, redirect, request, url_for
 from flask_login import UserMixin
-
 from src.database import db
+from werkzeug.security import generate_password_hash
 
 
 class User(db.Model, UserMixin):
@@ -11,6 +11,9 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return "<{}:{}>".format(self.id, self.name)
+
+    def set_password(self, password: str):
+        self.password_hash = generate_password_hash(password)
 
 
 def load_user(user_id):

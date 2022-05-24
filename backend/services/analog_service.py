@@ -1,11 +1,10 @@
 from functools import lru_cache
 from typing import Optional
 
-from elasticsearch import AsyncElasticsearch
-from fastapi import Depends, HTTPException
-
 from core.config import AppSettings
 from db.elastic import get_elastic
+from elasticsearch import AsyncElasticsearch
+from fastapi import Depends, HTTPException
 from models.input.model_analog import DataAnalogEntry
 from models.input.model_product import DataProductEntry
 from services.concurrent import run_in_executor

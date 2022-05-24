@@ -1,16 +1,15 @@
 import logging
 
 import uvicorn
+from api.v1 import analogs
+from core.config import AppSettings
+from core.logger import LOGGING
+from db import elastic
 from elasticsearch import AsyncElasticsearch
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from starlette import status
 from starlette.responses import RedirectResponse
-
-from api.v1 import analogs
-from core.config import AppSettings
-from core.logger import LOGGING
-from db import elastic
 
 settings = AppSettings()
 

@@ -1,7 +1,6 @@
-from werkzeug.datastructures import FileStorage
-
 from core.conf import BASE_DIR
 from src.forms import UploadForm
+from werkzeug.datastructures import FileStorage
 
 
 def save_form_file(form: UploadForm):

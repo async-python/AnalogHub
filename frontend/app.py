@@ -1,14 +1,12 @@
-from flask_bootstrap import Bootstrap4
-from flask_migrate import Migrate
-
 import flask_login
-from flask import Flask
-
+from auth.users import handle_needs_login, load_user
 from auth.views import user_auth
 from core.conf import FlaskConfig
+from flask import Flask
+from flask_bootstrap import Bootstrap4
+from flask_migrate import Migrate
 from src.ctx_processor import year_processor
 from src.database import db
-from auth.users import load_user, handle_needs_login
 from src.views import analog
 
 

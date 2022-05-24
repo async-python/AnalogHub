@@ -4,7 +4,6 @@ from typing import Any
 from elasticsearch import AsyncElasticsearch
 from fastapi import HTTPException
 from fastapi.logger import logger
-
 from services.queries import get_pagination_query
 
 

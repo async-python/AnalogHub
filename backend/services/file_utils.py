@@ -2,9 +2,8 @@ import uuid
 
 import aiofiles
 import pandas as pd
-from fastapi import HTTPException
-
 from core.config import BASE_DIR
+from fastapi import HTTPException
 from services.enums import Table
 
 xlsx_con_type = ('application/vnd.openxmlformats'

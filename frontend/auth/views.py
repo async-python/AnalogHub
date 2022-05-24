@@ -1,10 +1,9 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from flask_login import login_user, logout_user
-from werkzeug.security import check_password_hash
-
+from auth.forms import LoginForm
 from auth.users import User
 from core.conf import BASE_DIR
-from auth.forms import LoginForm
+from flask import Blueprint, redirect, render_template, request, url_for
+from flask_login import login_user, logout_user
+from werkzeug.security import check_password_hash
 
 user_auth = Blueprint('auth', __name__,
                       template_folder=BASE_DIR / 'templates',
