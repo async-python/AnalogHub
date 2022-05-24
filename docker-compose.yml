@@ -18,6 +18,7 @@ x-app-api:
       max-file: "10"
 
 volumes:
+  postgres_volume:
   es_volume_table:
   redis_volume_table:
   celery_volume_table:
