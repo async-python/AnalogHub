@@ -5,8 +5,7 @@ from dotenv import load_dotenv
 from pydantic import BaseSettings
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
-ENV_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-load_dotenv(ENV_DIR / '.env')
+load_dotenv()
 
 
 class FlaskConfig(object):
@@ -21,7 +20,7 @@ class UrlConf(BaseSettings):
     api_version: str = 'v1'
 
     class Config:
-        env_file = ENV_DIR / '.env'
+        env_file = BASE_DIR / '.env'
 
     @property
     def service_url(self):
