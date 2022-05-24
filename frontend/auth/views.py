@@ -1,3 +1,5 @@
+import click as click
+
 from auth.forms import LoginForm
 from auth.users import User
 from core.conf import BASE_DIR
@@ -5,9 +7,22 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import login_user, logout_user
 from werkzeug.security import check_password_hash
 
+from src.database import db
+
 user_auth = Blueprint('auth', __name__,
                       template_folder=BASE_DIR / 'templates',
                       static_folder=BASE_DIR / 'static')
+
+
+@user_auth.cli.command('createsuperuser')
+@click.argument('username')
+@click.argument('password')
+def create_superuser(username: str, password: str):
+    user = User()
+    user.name = username
+    user.set_password(password)
+    db.session.add(user)
+    db.session.commit()
 
 
 @user_auth.route('/login', methods=['GET', 'POST'])
