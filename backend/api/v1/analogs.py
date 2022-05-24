@@ -3,11 +3,9 @@ from http import HTTPStatus
 
 import celery
 from celery.result import AsyncResult
+from core.config import BASE_DIR
 from fastapi import (APIRouter, BackgroundTasks, Depends, File, HTTPException,
                      Query, UploadFile)
-from starlette.responses import FileResponse, JSONResponse
-
-from core.config import BASE_DIR
 from models.out.model_analog_out import DataAnalogOut
 from models.out.model_product_out import DataProductOut
 from services.analog_service import AnalogService, get_analog_service
@@ -18,6 +16,7 @@ from services.file_utils import (get_xlsx_path, save_file,
                                  verify_zip_type, xlsx_headers)
 from services.queries import page_num_params, page_size_params
 from services.transliterate import prepare_text
+from starlette.responses import FileResponse, JSONResponse
 from worker import (get_task_result, upload_elastic_analogs,
                     upload_elastic_makers)
 
