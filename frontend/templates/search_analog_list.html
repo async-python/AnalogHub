@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}<title>Поиск аналогов инструмента</title>{% endblock %}
+{% block content %}
+{% with url_action=url_for('analog.search_analogs_list'), form=form %}
+    {% include "includes/file_form.html" %}
+{% endwith %}
+{% with result=resonse_file %}
+    {% include "includes/result_file.html" %}
+{% endwith %}
+{% endblock %}

@@ -1,0 +1,23 @@
+{% macro render_field(field,cls,errcls) %}
+
+  {% if field.errors %}
+  <div class="form-group">
+    <label for="{{ field.id}}">{{ field.label.text }}</label>
+    
+    {{ field(class = cls + " " + errcls,**kwargs) | safe}}
+    <div class="invalid-feedback">
+      {% for error in field.errors %}
+      <span> {{error}}</span>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% else %}
+
+  <div class="form-group">
+    <label for="{{ field.id}}">{{ field.label.text }}</label>
+    {{ field(class = cls,**kwargs) | safe}}
+  </div>
+  
+  {% endif %}
+{% endmacro %}

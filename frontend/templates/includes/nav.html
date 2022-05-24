@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="{{ url_for('analog.index') }}"><span style="color:yellow">Analog</span> Hub</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item {% if url_for(request.endpoint) == url_for('analog.index') %}active{% endif %}">
+        <a class="nav-link" href="{{ url_for('analog.index') }}">Search Analogs</a>
+      </li>
+      <li class="nav-item {% if url_for(request.endpoint) == url_for('analog.search_product') %}active{% endif %}" >
+        <a class="nav-link" href="{{ url_for('analog.search_product') }}">Search Products</a>
+      </li>
+      <li class="nav-item {% if url_for(request.endpoint) == url_for('analog.search_analogs_list') %}active{% endif %}">
+        <a class="nav-link" href="{{ url_for('analog.search_analogs_list') }}">Search list analogs</a>
+      </li>
+        {% if current_user.is_authenticated and current_user.is_active %}
+          <li class="nav-item {% if url_for(request.endpoint) == url_for('analog.upload_xlsx') %}active{% endif %}">
+            <a class="nav-link" href="{{ url_for('analog.upload_xlsx') }}">Load analogs</a>
+          </li>
+          <li class="nav-item {% if url_for(request.endpoint) == url_for('analog.upload_zip') %}active{% endif %}">
+            <a class="nav-link" href="{{ url_for('analog.upload_zip') }}">Load products</a>
+          </li>
+          <li class="nav-item {% if url_for(request.endpoint) == url_for('auth.logout') %}active{% endif %}">
+            <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+          </li>
+        {% else %}
+          <li class="nav-item {% if url_for(request.endpoint) == url_for('auth.login') %}active{% endif %}">
+            <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+          </li>
+        {% endif %}
+    </ul>
+  </div>
+</nav>

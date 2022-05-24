@@ -2,7 +2,7 @@ version: '3.9'
 
 x-app-api:
   &fastapi_app_table
-  image: vardeath/analog_app:v1.0
+  image: vardeath/analog_app_backend:v1.0
   restart: always
   env_file:
     - .env
@@ -26,6 +26,27 @@ volumes:
   media_volume:
 
 services:
+  db_postgres_analog:
+    image: postgres:13.3-alpine
+    container_name: db_postgres
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    restart: always
+    expose:
+      - ${POSTGRES_PORT}
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
 
   db_elastic_table:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
@@ -40,7 +61,7 @@ services:
     env_file:
       - .env
     expose:
-      - 9200
+      - ${ELASTIC_PORT}
     healthcheck:
       test: ["CMD-SHELL", "curl --silent --fail ${ELASTIC_HOST}:${ELASTIC_PORT}/_cluster/health || exit 1"]
       interval: 30s
@@ -97,7 +118,7 @@ services:
     volumes:
       - file_volume:/fastapi/file_storage/
     expose:
-      - 8000
+      - ${FASTAPI_PORT}
 
   celery_worker:
     <<: *fastapi_app_table
@@ -136,6 +157,30 @@ services:
       celery_worker:
         condition: service_started
 
+  flask_app_analog:
+    image: vardeath/analog_app_frontend:v1.0
+    restart: on-failure
+    expose:
+      - ${FLASK_PORT}
+    command: flask db upgrade && gunicorn -w 4 -b 0.0.0.0:5000 app:create_app()
+    env_file:
+      - .env
+    volumes:
+      - ./frontend/static/:/static/
+      - ./frontend/media/:/media/
+      - static_volume:/static/
+      - media_volume:/media/
+    depends_on:
+      db_postgres_analog:
+        condition: service_healthy
+      - fastapi_app_analog
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+
   nginx_analog:
     image: nginx:1.19.5-alpine
     container_name: nginx_analog
@@ -153,7 +198,7 @@ services:
     ports:
       - "80:80"
     env_file:
-      - ./.env
+      - .env
     depends_on:
-      - fastapi_app_analog
+      - flask_app_analog
       - dashboard

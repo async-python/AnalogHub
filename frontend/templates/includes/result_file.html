@@ -1,0 +1,8 @@
+{% if result %}
+    <br>
+    <div class="card">
+        <div class="card-body">
+            <p class="card-text"><a href="{{ url_for('get_file', file_name=result) }}">Download file</a></p>
+        </div>
+    </div>
+{% endif %}

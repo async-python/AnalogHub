@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% block head %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        {% block styles %}
+            {{ bootstrap.load_css() }}
+        {% endblock %}
+        {% block title %}<title>Your page title</title>{% endblock %}
+        {% endblock %}
+    </head>
+    <body class="d-flex flex-column min-vh-100">
+        {% include 'includes/nav.html' %}
+        <main>
+            <div class="container">
+            <h1>{% block header %}{% endblock %}</h1>
+                <div class="card">
+                    <div class="card-body">
+                        {% block content %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </main>
+        <div class="wrapper flex-grow-1"></div>
+        {% include 'includes/footer.html' %}
+        {% block scripts %}
+            {{ bootstrap.load_js() }}
+        {% endblock %}
+    </body>
+</html>

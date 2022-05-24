@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}<title>Поиск аналогов инструмента</title>{% endblock %}
+{% block content %}
+    <form method="POST" action="{{ url_for('analog.index') }}">
+        {{ form.csrf_token }}
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                {{ form.submit(class="btn btn-outline-secondary") }}
+            </div>
+            {{ form.search(class="form-control", placeholder="") }}
+        </div>
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            {% for subfield in form.search_type %}
+                <label class="btn btn-outline-secondary btn-sm {% if subfield.label == 'ngram_search' %}active{% endif %}">
+                    {{ subfield() }}
+                    {{ subfield.label }}
+                </label>
+            {% endfor %}
+        </div>
+     </form>
+
+    {% if not_found %}
+        <div class="card mt-3">
+            <div class="card-body">
+                <p class="card-text">Не найдено</p>
+            </div>
+        </div>
+    {% endif %}
+    {% if result %}
+        {% for item in result %}
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm">
+                            <p class="card-text">Исходный инструмент: {{ item.base_name }} {{ item.base_maker }} <br> Аналог: {{ item.analog_name }} {{ item.analog_maker }}</p>
+                        </div>
+                        <div class="col-sm">
+                            <button class="btn btn-secondary" data-clipboard-text="{{ item.analog_name }}">
+                                Copy analog description
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <script src="{{ url_for('static', filename='/js/dist/clipboard.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='/js/copy_init.js') }}"></script>
+{% endblock %}

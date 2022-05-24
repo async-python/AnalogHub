@@ -6,6 +6,10 @@ jobs:
   build_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+    if: contains('
+      refs/heads/master
+      refs/heads/main
+      ', github.ref)
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -18,13 +22,20 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Push to Docker Hub
+      - name: Push to Docker Hub Backend
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: vardeath/analog_app:v1.0
+          tags: vardeath/analog_app_backend:v1.0
           context: backend
           file: backend/Dockerfile
+      - name: Push to Docker Hub Frontend
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: vardeath/analog_app_frontend:v1.0
+          context: frontend
+          file: frontend/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
@@ -47,6 +58,7 @@ jobs:
             cd ~
             sudo docker-compose down
             sudo rm -r -f ./app/
+            cp -r ~/static_files/ ~/app/frontend/static/
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
         with:
@@ -69,5 +81,6 @@ jobs:
             cd ~/app/
             touch .env
             echo "${{ secrets.PROD_ENV_FILE }}" >> .env
-            sudo docker image rm vardeath/analog_app:v1.0
+            sudo docker image rm vardeath/analog_app_backend:v1.0
+            sudo docker image rm vardeath/analog_app_frontend:v1.0
             sudo docker-compose up -d

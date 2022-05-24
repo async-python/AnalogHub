@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}<title>Поиск аналогов инструмента</title>{% endblock %}
+{% block content %}
+{% with url_action=url_for('analog.upload_zip'), form=form %}
+    {% include "includes/file_form.html" %}
+{% endwith %}
+{% with result=result %}
+    {% include "includes/result_upload.html" %}
+{% endwith %}
+{% endblock %}
