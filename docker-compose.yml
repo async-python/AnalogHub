@@ -173,7 +173,8 @@ services:
     depends_on:
       db_postgres_analog:
         condition: service_healthy
-      - fastapi_app_analog
+      fastapi_app_analog:
+        condition: service_started
     logging:
       driver: "json-file"
       options:

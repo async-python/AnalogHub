@@ -83,7 +83,7 @@ jobs:
             sudo cp -r ./static_files/* ./app/frontend/static/
             cd ~/app/
             sudo touch .env
-            echo "${{ secrets.PROD_ENV_FILE }}" >> .env
+            sudo echo "${{ secrets.PROD_ENV_FILE }}" >> .env
             sudo docker image pull vardeath/analog_app_backend:v1.0
             sudo docker image pull vardeath/analog_app_frontend:v1.0
             sudo docker-compose up -d
