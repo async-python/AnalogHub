@@ -18,7 +18,8 @@ def create_app():
     login_manager.user_loader(load_user)
     login_manager.unauthorized_handler(handle_needs_login)
     Bootstrap4(analog_app)
-    db.init_app(analog_app)
+    with analog_app.app_context():
+        db.init_app(analog_app)
     Migrate(analog_app, db)
     analog_app.context_processor(year_processor)
     analog_app.register_blueprint(analog, url_prefix='')
