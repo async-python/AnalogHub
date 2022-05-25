@@ -25,8 +25,8 @@ volumes:
   static_volume:
     driver: local
     driver_opts:
-      o: "rw"
-      type: bind
+      o: bind
+      type: none
       device: ./frontend/static/
   media_volume:
 
