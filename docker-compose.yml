@@ -22,12 +22,11 @@ volumes:
   es_volume_table:
   redis_volume_table:
   celery_volume_table:
-  file_volume:
   static_volume:
     driver: local
     driver_opts:
-      o: bind
-      type: none
+      o: "rw"
+      type: bind
       device: ./frontend/static/
   media_volume:
 
@@ -122,7 +121,7 @@ services:
     <<: *fastapi_app_table
     restart: on-failure
     volumes:
-      - file_volume:/fastapi/file_storage/
+      - media_volume:/fastapi/file_storage/
     expose:
       - ${FASTAPI_PORT}
 
@@ -131,7 +130,7 @@ services:
     container_name: celery_worker
     command: celery --app worker.celery_app worker --loglevel=info
     volumes:
-      - file_volume:/fastapi/file_storage/
+      - media_volume:/fastapi/file_storage/
       - celery_volume_table:/usr/src/app
     depends_on:
       - fastapi_app_analog
@@ -141,7 +140,7 @@ services:
     container_name: celery_beat
     command: celery -A worker.celery_app beat --loglevel=info
     volumes:
-      - file_volume:/fastapi/file_storage/
+      - media_volume:/fastapi/file_storage/
       - celery_volume_table:/usr/src/app
     depends_on:
       - fastapi_app_analog
@@ -173,8 +172,8 @@ services:
     env_file:
       - .env
     volumes:
-      - static_volume:/static/
-      - media_volume:/media/
+      - static_volume:/frontend/static/
+      - media_volume:/frontend/media/
     depends_on:
       db_postgres_analog:
         condition: service_healthy
