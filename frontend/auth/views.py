@@ -23,6 +23,7 @@ def create_superuser(username: str, password: str):
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
+    db.session.remove()
 
 
 @user_auth.route('/login', methods=['GET', 'POST'])

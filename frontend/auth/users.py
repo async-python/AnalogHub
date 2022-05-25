@@ -17,7 +17,9 @@ class User(db.Model, UserMixin):
 
 
 def load_user(user_id):
-    return db.session.query(User).get(user_id)
+    query = db.session.query(User).get(user_id)
+    db.session.remove()
+    return query
 
 
 def handle_needs_login():
