@@ -39,7 +39,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm">
-                            <p class="card-text">{{ item.name }} {{ item.maker }}</p>
+                            <p class="card-text">{{ item.name }} {{ item.maker }} {% if item.search_field %}{{ item.search_field }}{% endif %} {% if item.position_state %}{{ item.position_state }}{% endif %}</p>
                         </div>
                         <div class="col-sm">
                             <button class="btn btn-secondary" data-clipboard-text="{{ item.name }}">
