@@ -17,8 +17,8 @@ class SearchForm(FlaskForm):
 class SearchFormProduct(SearchForm):
     maker = SelectField(
         'Search type', [DataRequired()],
-        choices=['ALL', 'PALBIT', 'YG-1', 'VERGNANO', 'VARGUS', 'SANHOG',
-                 'OMAP', 'NANOLOY', 'LIKON', 'HORN', 'HELION',
+        choices=['PRIORITY', 'ALL', 'PALBIT', 'YG-1', 'VERGNANO', 'VARGUS',
+                 'SANHOG', 'OMAP', 'NANOLOY', 'LIKON', 'HORN', 'HELION',
                  'GABRIEL_MAUVAIS', 'FRESAL', 'DEREK', 'BRICE', 'Bribase',
                  'ASKUP', 'ILIX'],
         default='ALL')

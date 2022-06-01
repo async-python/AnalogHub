@@ -29,6 +29,8 @@ class AppSettings(BaseSettings):
     service_host: str = 'localhost'
     service_port: str = 8000
     api_version: str = 'v1'
+    priority_brands = ['PALBIT', 'VARGUS', 'VERGNANO',
+                       'DEREK', 'BRICE', 'OMAP']
 
     file_path = BASE_DIR / 'file_storage'
 

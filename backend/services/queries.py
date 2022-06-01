@@ -1,3 +1,8 @@
+from core.config import AppSettings
+from services.enums import Maker, SearchType
+
+conf = AppSettings()
+
 page_num_params = {'default': 0, 'ge': 0}
 page_size_params = {'default': 20, 'ge': 1}
 
@@ -20,32 +25,16 @@ def get_base_match_query(search_field: str, request: str):
     return query
 
 
-def get_wildcard_query(search_fields: list[str], request: str, maker=None):
-    query = {
-        "query": {
-            "bool": {
-                "must": {
-                    "query_string": {
-                        "query": request,
-                        "fields": search_fields
-                    }
-                }
-            }
-        }
-    }
-    if maker:
-        filter = {"filter": {"term": {"maker": maker}}}
-        query["query"]["bool"] = query["query"]["bool"] | filter
-    return query
-
-
 def get_multimatch_query(
-        search_fields: list, request: str, maker: str = None, ):
+        search_fields: list,
+        request: str,
+        maker: str = None,
+        search_type: SearchType = SearchType.multi_match):
     query = {
         "query": {
             "bool": {
                 "must": {
-                    "multi_match": {
+                    search_type.value: {
                         "query": request,
                         "fields": search_fields
                     }
@@ -54,9 +43,18 @@ def get_multimatch_query(
         }
     }
     if maker:
-        filter = {"filter": {"term": {"maker": maker}}}
-        query["query"]["bool"] = query["query"]["bool"] | filter
+        maker_filter = get_maker_filter(maker)
+        query["query"]["bool"] = query["query"]["bool"] | maker_filter
+        return query
     return query
+
+
+def get_maker_filter(maker: str):
+    filter_term = "term"
+    if maker == Maker.PRIORITY:
+        maker = conf.priority_brands
+        filter_term += "s"
+    return {"filter": {filter_term: {"maker": maker}}}
 
 
 def get_pagination_query(page_number: int, page_size: int):

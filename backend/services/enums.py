@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class Maker(str, Enum):
+    PRIORITY = 'PRIORITY'
     ALL = 'ALL'
     PALBIT = 'PALBIT'
     YG1 = 'YG-1'
@@ -25,6 +26,11 @@ class Maker(str, Enum):
 class Filter(str, Enum):
     string_search = 'string_search'
     ngram_search = 'ngram_search'
+
+
+class SearchType(str, Enum):
+    query_string = 'query_string'
+    multi_match = 'multi_match'
 
 
 class Table(str, Enum):

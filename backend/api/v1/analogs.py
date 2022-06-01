@@ -90,7 +90,7 @@ async def search_analogs(query: str,
              response_model_exclude_none=True)
 async def search_products(query: str,
                           search_type: Filter = Filter.ngram_search,
-                          maker: Maker = Maker.ALL,
+                          maker: Maker = Maker.PRIORITY,
                           page_number: int = Query(**page_num_params),
                           page_size: int = Query(**page_size_params),
                           analog_service: AnalogService = Depends(
@@ -100,7 +100,7 @@ async def search_products(query: str,
         result = await analog_service.search_products_ngram(
             query_text, maker, page_number, page_size)
     else:
-        result = await analog_service.search_products_wildcard(
+        result = await analog_service.search_products_ngram(
             query_text, maker, page_number, page_size)
     return [DataProductOut(**model.dict()) for model in result]
 
