@@ -34,7 +34,7 @@ def get_multimatch_query(
         "query": {
             "bool": {
                 "must": {
-                    search_type.value: {
+                    search_type: {
                         "query": request,
                         "fields": search_fields
                     }
