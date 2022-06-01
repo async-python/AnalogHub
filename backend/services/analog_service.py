@@ -8,9 +8,9 @@ from fastapi import Depends, HTTPException
 from models.input.model_analog import DataAnalogEntry
 from models.input.model_product import DataProductEntry
 from services.concurrent import run_in_executor
-from services.enums import Maker
+from services.enums import Maker, SearchType
 from services.file_utils import get_base_names_xlsx, save_xlsx_analogs
-from services.queries import (get_multimatch_query, get_wildcard_query,
+from services.queries import (get_multimatch_query,
                               page_search_params)
 from services.template_service import TemplateService
 from services.transliterate import prepare_text, stringify
@@ -63,7 +63,8 @@ class AnalogService(TemplateService):
                                     ) -> Optional[list[DataAnalogEntry]]:
         if search_fields is None:
             search_fields = ['analog_name_string', 'base_name_string']
-        query = get_wildcard_query(search_fields, request)
+        query = get_multimatch_query(
+            search_fields, request, SearchType.query_string)
         analogs = await self.get_list_from_elastic(page_number,
                                                    page_size, query)
         return analogs
@@ -89,9 +90,11 @@ class AnalogService(TemplateService):
                                        ) -> Optional[list[DataProductEntry]]:
         search_fields = ['name_string', ]
         if maker.value != Maker.ALL:
-            query = get_wildcard_query(search_fields, request, maker)
+            query = get_multimatch_query(
+                search_fields, request, maker.value, SearchType.query_string)
         else:
-            query = get_wildcard_query(search_fields, request)
+            query = get_multimatch_query(
+                search_fields, request, SearchType.query_string)
         products = await self.get_list_from_elastic(
             page_number, page_size, query,
             es_index=settings.es_index_product,
