@@ -100,7 +100,7 @@ async def search_products(query: str,
         result = await analog_service.search_products_ngram(
             query_text, maker, page_number, page_size)
     else:
-        result = await analog_service.search_products_wildcard(
+        result = await analog_service.search_products_string(
             query_text, maker, page_number, page_size)
     return [DataProductOut(**model.dict()) for model in result]
 

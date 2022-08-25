@@ -52,7 +52,7 @@ class AnalogService(TemplateService):
                                    ) -> Optional[list[DataAnalogEntry]]:
         if search_fields is None:
             search_fields = ['analog_name_ngram', 'base_name_ngram']
-        query = get_multimatch_query(search_fields, request)
+        query = get_multimatch_query(request, search_fields)
         analogs = await self.get_list_from_elastic(page_number,
                                                    page_size, query)
         return analogs
@@ -64,7 +64,7 @@ class AnalogService(TemplateService):
         if search_fields is None:
             search_fields = ['analog_name_string', 'base_name_string']
         query = get_multimatch_query(
-            search_fields, request, SearchType.query_string)
+            request, search_fields, SearchType.query_string)
         analogs = await self.get_list_from_elastic(page_number,
                                                    page_size, query)
         return analogs
@@ -75,9 +75,9 @@ class AnalogService(TemplateService):
         search_fields = ['name_ngram', 'search_field']
         if maker.value != Maker.ALL:
             query = get_multimatch_query(
-                search_fields, request, maker.value)
+                request, search_fields, maker.value)
         else:
-            query = get_multimatch_query(search_fields, request)
+            query = get_multimatch_query(request, search_fields)
         products = await self.get_list_from_elastic(
             page_number,
             page_size, query,
@@ -85,16 +85,16 @@ class AnalogService(TemplateService):
             model=DataProductEntry)
         return products
 
-    async def search_products_wildcard(self, request: str, maker: Maker,
-                                       page_number: int, page_size: int
-                                       ) -> Optional[list[DataProductEntry]]:
+    async def search_products_string(self, request: str, maker: Maker,
+                                     page_number: int, page_size: int
+                                     ) -> Optional[list[DataProductEntry]]:
         search_fields = ['name_string', ]
         if maker.value != Maker.ALL:
             query = get_multimatch_query(
-                search_fields, request, maker.value, SearchType.query_string)
+                request, search_fields, maker.value, SearchType.query_string)
         else:
             query = get_multimatch_query(
-                search_fields, request, SearchType.query_string)
+                request, search_fields, SearchType.query_string)
         products = await self.get_list_from_elastic(
             page_number, page_size, query,
             es_index=settings.es_index_product,

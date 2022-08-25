@@ -12,24 +12,8 @@ page_search_params = {
 }
 
 
-def get_base_match_query(search_field: str, request: str):
-    query = {
-        "query": {
-            "bool": {
-                "must": [
-                    {"match": {search_field: request}}
-                ]
-            }
-        }
-    }
-    return query
-
-
-def get_multimatch_query(
-        search_fields: list,
-        request: str,
-        maker: str = None,
-        search_type: SearchType = SearchType.multi_match):
+def get_base_multimatch_query(
+        request: str, search_fields: list[str], search_type: SearchType):
     query = {
         "query": {
             "bool": {
@@ -42,6 +26,15 @@ def get_multimatch_query(
             }
         }
     }
+    return query
+
+
+def get_multimatch_query(
+        request: str,
+        search_fields: list[str],
+        maker: str = None,
+        search_type: SearchType = SearchType.multi_match):
+    query = get_base_multimatch_query(request, search_fields, search_type)
     if maker:
         maker_filter = get_maker_filter(maker)
         query["query"]["bool"] = query["query"]["bool"] | maker_filter
