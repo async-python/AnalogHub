@@ -3,24 +3,23 @@ import logging
 import databases
 import uvicorn
 from aioredis import Redis
-from elasticsearch import AsyncElasticsearch
 from fastapi import FastAPI, Request
 from fastapi.responses import ORJSONResponse
 from starlette import status
 from starlette.responses import RedirectResponse, Response
 
-from api.v1 import auth, manage, search
+from api.v1 import routes
 from core.config import AppSettings
 from core.logger import LOGGING
-from db import elastic_db, postgres_db, redis_db
+from db import postgres_db, redis_db
 
 logger = logging.getLogger(__name__)
 settings = AppSettings()
 
 app = FastAPI(
     title=settings.project_name,
-    docs_url='/api/openapi',
-    openapi_url='/api/openapi.json',
+    docs_url='/api/auth/openapi',
+    openapi_url='/auth/api/openapi.json',
     default_response_class=ORJSONResponse
 )
 
@@ -36,12 +35,12 @@ async def catch_exceptions_middleware(request: Request, call_next):
 
 @app.get('/')
 async def index():
-    return RedirectResponse('/api/openapi', status_code=status.HTTP_302_FOUND)
+    return RedirectResponse(
+        '/api/auth/openapi', status_code=status.HTTP_302_FOUND)
 
 
 @app.on_event('startup')
 async def startup():
-    elastic_db.es = AsyncElasticsearch(hosts=settings.elastic_url)
     postgres_db.ps = databases.Database(settings.postgres_url)
     redis_db.rs = Redis(host=settings.redis_host,
                         port=settings.redis_port,
@@ -53,17 +52,11 @@ async def startup():
 
 @app.on_event('shutdown')
 async def shutdown():
-    await elastic_db.es.close()
     await postgres_db.ps.disconnect()
     await redis_db.rs.close()
 
-
-app.include_router(search.router, prefix='/api/v1/analog',
-                   tags=['Search Analogs'])
-app.include_router(manage.router, prefix='/api/v1/manage',
-                   tags=['Manage Tools'])
-app.include_router(auth.router, prefix='/api/v1/auth',
-                   tags=['Auth Service'])
+app.include_router(
+    routes.router, prefix='/api/v1/auth', tags=['Auth Service'])
 
 if __name__ == '__main__':
     uvicorn.run(

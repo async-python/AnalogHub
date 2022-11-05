@@ -12,11 +12,12 @@ import pandas as pd
 from celery import Celery
 from celery.schedules import crontab
 from celery.utils.log import get_task_logger
-from core.config import BASE_DIR, AppSettings
 from elasticsearch import Elasticsearch
-from models.input.model_analog import DataAnalogEntry
-from services.file_utils import get_columns_locs
-from services.mappings import makers_map
+
+from core.config import BASE_DIR, AppSettings
+from models.es_models.es_analog import DataAnalogIn
+from utils.file_utils import get_columns_locs
+from utils.mappings import makers_map
 
 settings = AppSettings()
 
@@ -73,7 +74,7 @@ def upload_elastic_analogs(file_path):
         with open(file_path, 'rb') as f:
             xls = pd.read_excel(f, 0, keep_default_na=False)
             locs = get_columns_locs(xls)
-            transform = lambda x: DataAnalogEntry(
+            transform = lambda x: DataAnalogIn(
                 base_name=x[locs.get('base_col_num')],
                 base_maker=x[locs.get('base_maker_col_num')],
                 analog_name=x[locs.get('analog_col_num')],
