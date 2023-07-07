@@ -53,8 +53,8 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           password: ${{ secrets.PASSWORD }}
-#          key: ${{ secrets.SSH_KEY }}
-#          passphrase: ${{ secrets.PASSPHRASE }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             cd ~/app/
             sudo docker-compose down
@@ -66,8 +66,8 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           password: ${{ secrets.PASSWORD }}
-#          key: ${{ secrets.SSH_KEY }}
-#          passphrase: ${{ secrets.PASSPHRASE }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
           source: "docker-compose.yml, backend/curl_entrypoint.sh, backend/scripts/nginx/*.conf, backend/db/es_schemes/*.json"
           target: "~/app/"
       - name: executing remote ssh commands to deploy
